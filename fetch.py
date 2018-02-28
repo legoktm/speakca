@@ -25,6 +25,7 @@ import requests
 import soundcloud
 import subprocess
 from scdl import scdl
+import tempfile
 
 FEED = 'https://speakca.net/feed/'
 SCDL = os.path.abspath(os.path.join(os.path.dirname(__file__), 'venv/bin/scdl'))
@@ -45,7 +46,30 @@ def main():
             print('Unable to extract soundcloud :(')
             continue
         permalink = get_permalink_url(found.group(1))
-        subprocess.check_call([SCDL, '-l', permalink], cwd=STATIC)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            # scdl will download into the cwd with the episode's filename
+            subprocess.check_call([SCDL, '-l', permalink], cwd=tmpdirname)
+            print(os.listdir(tmpdirname))
+            # It's a temporary directory, there should only be one file
+            basename = os.listdir(tmpdirname)[0]
+            fname = os.path.join(tmpdirname, basename)
+            # Sanity check
+            assert fname.endswith('.mp3')
+            # Preserve the mtime
+            mtime = os.path.getmtime(fname)
+            finalname = os.path.join(STATIC, basename)
+            # Send it through ffmpeg per Amazon's requirements:
+            # https://developer.amazon.com/docs/custom-skills/speech-synthesis-markup-language-ssml-reference.html
+            subprocess.check_call([
+                'ffmpeg', '-i', fname,
+                '-ac', '2',
+                '-codec:2', 'libmp3lame',
+                '-b:a', '48k',
+                '-ar', '16000',
+                finalname
+            ])
+            # And restore mtime on the files so we order them properly
+            os.utime(finalname, times=(mtime, mtime))
 
 
 def get_permalink_url(track_id):
