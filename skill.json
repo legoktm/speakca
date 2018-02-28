@@ -1,0 +1,41 @@
+{
+  "languageModel": {
+    "intents": [
+      {
+        "name": "AMAZON.CancelIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.HelpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PauseIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.ResumeIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.StopIntent",
+        "samples": []
+      },
+      {
+        "name": "DemoIntent",
+        "samples": [
+          "play this weeks episode"
+        ],
+        "slots": []
+      },
+      {
+        "name": "QuestionIntent",
+        "samples": [
+          "this weeks question"
+        ],
+        "slots": []
+      }
+    ],
+    "invocationName": "california speaks"
+  }
+}
