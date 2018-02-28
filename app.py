@@ -159,7 +159,10 @@ def grab_question():
                          ' right now, please try again later')
 
     # XXX: What if someone adds markup to the HTML?
-    say = 'Here\'s this week\'s question: {}'.format(question[0])
+    # We break up the phone number so that Alexa will
+    # pronounce it properly.
+    say = 'Here\'s this week\'s question: {} ' \
+          'To respond, call 1 8 3 3 SPEAK-CA.'.format(question[0])
     return statement(say)
 
 
