@@ -43,7 +43,7 @@ playlist = [
     for fname in files
     if not fname.startswith('.')
 ]
-print(files)
+print(playlist)
 
 
 class QueueManager(object):
