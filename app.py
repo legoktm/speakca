@@ -198,34 +198,6 @@ def play_back_finished():
         return statement('No more episodes')
 
 
-@ask.intent('AMAZON.NextIntent')
-def next_song():
-    if queue.up_next:
-        next_stream = queue.step()
-        return audio().play(next_stream)
-    else:
-        return audio('There are no more episodes in the queue')
-
-
-@ask.intent('AMAZON.PreviousIntent')
-def previous_song():
-    if queue.previous:
-        prev_stream = queue.step_back()
-        return audio().play(prev_stream)
-
-    else:
-        return audio('There are no episodes in your history.')
-
-
-@ask.intent('AMAZON.StartOverIntent')
-def restart_track():
-    if queue.current:
-        speech = 'Restarting'
-        return audio(speech).play(queue.current, offset=0)
-    else:
-        return statement('There is no current edpisode')
-
-
 @ask.on_playback_started()
 def started(offset, token, url):
     pass
