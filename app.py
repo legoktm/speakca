@@ -225,6 +225,5 @@ def session_ended():
     return "{}", 200
 
 
-if __name__ == '__main__':
-    # TODO: Don't hardcode port
-    app.run(debug=True, port=3003)
+def lambda_handler(event, _context):
+    return ask.run_aws_lambda(event)
