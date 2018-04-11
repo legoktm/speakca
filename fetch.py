@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
+import boto3
 import feedparser
 import os
 import re
@@ -33,15 +33,27 @@ STATIC = os.path.join(os.path.dirname(__file__), 'static')
 # Grab the track ID out of the <iframe> via regex
 TRACK_RE = re.compile(r'api\.soundcloud\.com/tracks/([0-9]*?)&amp;')
 session = requests.Session()
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('alexa-speakca')
 
 # For later:
 # ffmpeg -i input.mp3 -ss 0 -to 85 -c copy output.mp3
 # Trims a file to that many seconds (85)
 
+downloaded = set()
+
+for obj in bucket.objects.all():
+    full_obj = s3.Object(obj.bucket_name, obj.key)
+    if 'url' in full_obj.metadata:
+        downloaded.add(full_obj.metadata.get('url'))
+
 
 def main():
     parsed = feedparser.parse(FEED)
     for entry in parsed['entries']:
+        if entry['link'] in downloaded:
+            print('Skipping %s, already fetched' % entry['link'])
+            continue
         print('Downloading from ' + entry['link'])
         r = session.get(entry['link'])
         r.raise_for_status()
@@ -72,6 +84,13 @@ def main():
                 '-ar', '16000',
                 finalname
             ])
+            print('Uploading to S3...')
+            bucket.upload_file(finalname, basename, ExtraArgs={
+                'ACL': 'public-read',
+                'Metadata': {
+                    'url': entry['link']
+                }
+            })
             # And restore mtime on the files so we order them properly
             os.utime(finalname, times=(mtime, mtime))
 
