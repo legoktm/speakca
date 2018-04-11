@@ -1,0 +1,4 @@
+#!/bin/bash
+pip install -r requirements.txt -t .
+rm -f dist.zip
+zip -r dist.zip .
