@@ -16,6 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+import boto3
 import collections
 import logging
 import os
@@ -30,20 +31,24 @@ app = Flask(__name__)
 ask = Ask(app, '/')
 logging.getLogger('flask_ask').setLevel(logging.INFO)
 STATIC = os.path.join(os.path.dirname(__file__), 'static')
+s3 = boto3.resource('s3')
 
-# Play the most recent file first
-# TODO: Does this require server reload to find new files??
+bucket = s3.Bucket('alexa-speakca')
+
+
+def s3_url(obj):
+    return 'https://s3.amazonaws.com/%s/%s' % (obj.bucket_name, obj.key)
+
+
 files = sorted(
-    os.listdir(STATIC),
+    bucket.objects.all(),
     reverse=True,
-    key=lambda fname: os.path.getmtime(os.path.join(STATIC, fname)))
-# TODO: Don't hardcode server path
-playlist = [
-    'https://test.legoktm.com/static/{}'.format(fname)
-    for fname in files
-    if not fname.startswith('.')
-]
-print(playlist)
+    key=lambda obj: obj.last_modified
+)
+
+# TODO will this automatically be reloaded whenever a
+# new request is made?
+playlist = [s3_url(obj) for obj in files]
 
 
 class QueueManager(object):
