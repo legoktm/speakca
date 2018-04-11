@@ -37,6 +37,7 @@ bucket = s3.Bucket('alexa-speakca')
 
 
 def s3_url(obj):
+    # TODO this should really be something that boto provides
     return 'https://s3.amazonaws.com/%s/%s' % (obj.bucket_name, obj.key)
 
 
