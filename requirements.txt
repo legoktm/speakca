@@ -1,4 +1,3 @@
-boto3
 feedparser
 flask-ask
 requests
