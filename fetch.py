@@ -34,6 +34,10 @@ STATIC = os.path.join(os.path.dirname(__file__), 'static')
 TRACK_RE = re.compile(r'api\.soundcloud\.com/tracks/([0-9]*?)&amp;')
 session = requests.Session()
 
+# For later:
+# ffmpeg -i input.mp3 -ss 0 -to 85 -c copy output.mp3
+# Trims a file to that many seconds (85)
+
 
 def main():
     parsed = feedparser.parse(FEED)
