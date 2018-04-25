@@ -198,7 +198,8 @@ def search(term):
         if entry['link'] in known_stuff:
             # play it
             pass
-    return question('Sorry, unable to find anything related to that.').reprompt('Try searching again?').simple_card('California Speaks', 'Sorry unable to find anything related to that. Try searching again?')
+    text = 'Sorry, unable to find anything related to "%s". Try searching again?' % term
+    return question(text).simple_card('California Speaks', text)
 
 
 @ask.intent('DemoIntent')
