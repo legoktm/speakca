@@ -24,6 +24,7 @@ from copy import copy
 import re
 import requests
 
+import feedparser
 from flask import Flask
 from flask_ask import Ask, question, statement, audio
 
@@ -50,6 +51,13 @@ files = sorted(
 # TODO will this automatically be reloaded whenever a
 # new request is made?
 playlist = [s3_url(obj) for obj in files]
+
+known_stuff = {}
+for obj in bucket.objects.all():
+    full_obj = s3.Object(obj.bucket_name, obj.key)
+    if 'url' in full_obj.metadata:
+        known_stuff[full_obj.metadata.get('url')] = obj
+
 
 
 class QueueManager(object):
@@ -178,6 +186,19 @@ def launch():
     text = 'Ask me to play this week\'s episode or what this week\'s question is.'
     prompt = 'You can ask me to play this week\'s episode or what this week\'s question is.'
     return question(text).reprompt(prompt).simple_card(card_title, text)
+
+
+@ask.intent('SearchIntent')
+def search(term):
+    r = requests.get('https://speakca.net/', params={'s': term, 'feed': 'rss2'})
+    if not r.ok:
+        return statement('Sorry, we\'re experiencing technical difficulties. Please try again later.')
+    parsed = feedparser.parse(r.text)
+    for entry in parsed['entries']:
+        if entry['link'] in known_stuff:
+            # play it
+            pass
+    return question('Sorry, unable to find anything related to that.').reprompt('Try searching again?').simple_card('California Speaks', 'Sorry unable to find anything related to that. Try searching again?')
 
 
 @ask.intent('DemoIntent')
