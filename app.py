@@ -206,7 +206,7 @@ def search(term):
     for entry in parsed['entries']:
         if entry['link'] in known_stuff:
             # play it
-            return statement(_play(known_stuff[entry['link']]))
+            return question(_play(known_stuff[entry['link']]))
     text = 'Sorry, unable to find anything related to "%s". Try searching again?' % term
     return question(text).simple_card('California Speaks', text)
 
