@@ -49,19 +49,31 @@ for obj in bucket.objects.all():
 
 
 def main():
-    parsed = feedparser.parse(FEED)
-    for entry in parsed['entries']:
-        if entry['link'] in downloaded:
-            print('Skipping %s, already fetched' % entry['link'])
-            continue
-        print('Downloading from ' + entry['link'])
-        r = session.get(entry['link'])
-        r.raise_for_status()
-        found = TRACK_RE.search(r.text)
-        if not found:
-            print('Unable to extract soundcloud :(')
-            continue
-        permalink = get_permalink_url(found.group(1))
+    i = 1
+    do = []
+    while True:
+        r = requests.get(FEED, params={'paged': i})
+        if not r.ok:
+            break
+        parsed = feedparser.parse(r.text)
+        for entry in parsed['entries']:
+            if entry['link'] in downloaded:
+                print('Skipping %s, already fetched' % entry['link'])
+                continue
+            print('Downloading from ' + entry['link'])
+            r = session.get(entry['link'])
+            r.raise_for_status()
+            found = TRACK_RE.search(r.text)
+            if not found:
+                print('Unable to extract soundcloud :(')
+                continue
+            permalink = get_permalink_url(found.group(1))
+            do.append([permalink, entry['link']])
+        i += 1
+
+    print(do)
+    # Reverse so they get uploaded in reverse order
+    for permalink, link in reversed(do):
         with tempfile.TemporaryDirectory() as tmpdirname:
             # scdl will download into the cwd with the episode's filename
             subprocess.check_call([SCDL, '-l', permalink], cwd=tmpdirname)
@@ -88,7 +100,7 @@ def main():
             bucket.upload_file(finalname, basename, ExtraArgs={
                 'ACL': 'public-read',
                 'Metadata': {
-                    'url': entry['link']
+                    'url': link
                 }
             })
             # And restore mtime on the files so we order them properly
