@@ -192,9 +192,9 @@ def _play(obj):
     url = s3_url(obj)
     return """
 <speak>
-<audio src="{}" />
+<audio src="%s" />
 </speak>
-""".format(url)
+""" % url
 
 
 @ask.intent('SearchIntent')
