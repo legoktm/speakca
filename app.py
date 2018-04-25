@@ -191,8 +191,8 @@ def launch():
 def _play(obj):
     url = s3_url(obj)
     # test
-    url = 'https://legoktm.com/output.mp3'
-    return """<speak><audio src="%s" /></speak>""" % url
+    url = 'https://legoktm.com/1.mp3'
+    return """<speak><audio src="https://legoktm.com/1.mp3" /><audio src="https://legoktm.com/2.mp3" /><audio src="https://legoktm.com/3.mp3" /></speak>"""
 
 
 @ask.intent('SearchIntent')
