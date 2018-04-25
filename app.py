@@ -188,6 +188,15 @@ def launch():
     return question(text).reprompt(prompt).simple_card(card_title, text)
 
 
+def _play(obj):
+    url = s3_url(obj)
+    return """
+<speak>
+<audio src="{}" />
+</speak>
+""".format(url)
+
+
 @ask.intent('SearchIntent')
 def search(term):
     r = requests.get('https://speakca.net/', params={'s': term, 'feed': 'rss2'})
@@ -197,7 +206,7 @@ def search(term):
     for entry in parsed['entries']:
         if entry['link'] in known_stuff:
             # play it
-            pass
+            return statement(_play(known_stuff[entry['link']]))
     text = 'Sorry, unable to find anything related to "%s". Try searching again?' % term
     return question(text).simple_card('California Speaks', text)
 
