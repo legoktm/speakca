@@ -183,16 +183,8 @@ def grab_question():
 @ask.launch
 def launch():
     card_title = 'California Speaks'
-    text = 'Ask me to play this week\'s episode or what this week\'s question is.'
-    prompt = 'You can ask me to play this week\'s episode or what this week\'s question is.'
-    return question(text).reprompt(prompt).simple_card(card_title, text)
-
-
-def _play(obj):
-    url = s3_url(obj)
-    # test
-    url = 'https://legoktm.com/1.mp3'
-    return """<speak><audio src="https://legoktm.com/1.mp3" /><audio src="https://legoktm.com/2.mp3" /><audio src="https://legoktm.com/3.mp3" /></speak>"""
+    text = 'Ask me to play this week\'s episode, what this week\'s question is or search for something.'
+    return question(text).simple_card(card_title, text)
 
 
 @ask.intent('SearchIntent')
