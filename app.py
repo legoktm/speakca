@@ -183,6 +183,17 @@ def grab_question():
 @ask.launch
 def launch():
     card_title = 'California Speaks'
+    # FIXME: Better help text here?
+    # parallelism
+    text = 'Ask me to play this week\'s episode, what this week\'s question is or search for something.'
+    return question(text).simple_card(card_title, text)
+
+
+@ask.intent('AMAZON.HelpIntent')
+def help_():
+    card_title = 'California Speaks'
+    # FIXME: Better help text here?
+    # parallelism
     text = 'Ask me to play this week\'s episode, what this week\'s question is or search for something.'
     return question(text).simple_card(card_title, text)
 
