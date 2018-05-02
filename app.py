@@ -59,7 +59,6 @@ for obj in bucket.objects.all():
         known_stuff[full_obj.metadata.get('url')] = obj
 
 
-
 class QueueManager(object):
     """Manages queue data in a seperate context from current_stream.
 
@@ -187,6 +186,16 @@ def launch():
     # parallelism
     text = 'Ask me to play this week\'s episode, what this week\'s question is or search for something.'
     return question(text).simple_card(card_title, text)
+
+
+@ask.intent('AMAZON.StopIntent')
+def stop():
+    return statement('Thanks for using the California Speaks skill')
+
+
+@ask.intent('AMAZON.CancelIntent')
+def cancel():
+    return statement('Thanks for using the California Speaks skill')
 
 
 @ask.intent('AMAZON.HelpIntent')
