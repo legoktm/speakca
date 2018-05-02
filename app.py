@@ -198,6 +198,16 @@ def cancel():
     return statement('Thanks for using the California Speaks skill')
 
 
+@ask.intent('AMAZON.FallbackIntent')
+def fallback():
+    card_title = 'California Speaks'
+    text = """Sorry, I didn't understand that. You can ask the skill to play this week's episode,
+    to read out this week's question. You can also search through past episodes for specific topics.
+    For example, try asking Alexa to search for water.
+    """
+    return question(text).simple_card(card_title, text)
+
+
 @ask.intent('AMAZON.HelpIntent')
 def help_():
     card_title = 'California Speaks'
