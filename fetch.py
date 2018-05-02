@@ -84,7 +84,6 @@ def main():
             # Sanity check
             assert fname.endswith('.mp3')
             # Preserve the mtime
-            mtime = os.path.getmtime(fname)
             finalname = os.path.join(STATIC, basename)
             # Send it through ffmpeg per Amazon's requirements:
             # https://developer.amazon.com/docs/custom-skills/speech-synthesis-markup-language-ssml-reference.html
@@ -103,8 +102,6 @@ def main():
                     'url': link
                 }
             })
-            # And restore mtime on the files so we order them properly
-            os.utime(finalname, times=(mtime, mtime))
 
 
 def get_permalink_url(track_id):
