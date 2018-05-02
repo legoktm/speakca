@@ -194,7 +194,11 @@ def help_():
     card_title = 'California Speaks'
     # FIXME: Better help text here?
     # parallelism
-    text = 'Ask me to play this week\'s episode, what this week\'s question is or search for something.'
+    text = """California Speaks is an opportunity for Californians to make their voices heard
+by responding to a new question each week. You can ask the skill to play this week's episode,
+to read out this week's question. You can also search through past episodes for specific topics.
+For example, try asking Alexa to search for water.
+"""
     return question(text).simple_card(card_title, text)
 
 
