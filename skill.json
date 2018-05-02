@@ -1,53 +1,60 @@
 {
-  "languageModel": {
-    "intents": [
-      {
-        "name": "AMAZON.CancelIntent",
-        "samples": []
-      },
-      {
-        "name": "AMAZON.HelpIntent",
-        "samples": []
-      },
-      {
-        "name": "AMAZON.PauseIntent",
-        "samples": []
-      },
-      {
-        "name": "AMAZON.ResumeIntent",
-        "samples": []
-      },
-      {
-        "name": "AMAZON.StopIntent",
-        "samples": []
-      },
-      {
-        "name": "DemoIntent",
-        "samples": [
-          "play this weeks episode"
-        ],
-        "slots": []
-      },
-      {
-        "name": "QuestionIntent",
-        "samples": [
-          "this weeks question"
-        ],
-        "slots": []
-      },
-      {
-        "name": "SearchIntent",
-        "samples": [
-          "search for {term}"
-        ],
-        "slots": [
-          {
-            "name": "term",
-            "type": "AMAZON.SearchQuery"
-          }
-        ]
-      }
-    ],
-    "invocationName": "california speaks"
-  }
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "california speaks",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.PauseIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ResumeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "DemoIntent",
+                    "slots": [],
+                    "samples": [
+                        "play this weeks episode"
+                    ]
+                },
+                {
+                    "name": "QuestionIntent",
+                    "slots": [],
+                    "samples": [
+                        "this weeks question"
+                    ]
+                },
+                {
+                    "name": "SearchIntent",
+                    "slots": [
+                        {
+                            "name": "term",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "search for {term}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                }
+            ],
+            "types": []
+        }
+    }
 }
