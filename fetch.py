@@ -36,19 +36,15 @@ session = requests.Session()
 s3 = boto3.resource('s3')
 bucket = s3.Bucket('alexa-speakca')
 
-# For later:
-# ffmpeg -i input.mp3 -ss 0 -to 85 -c copy output.mp3
-# Trims a file to that many seconds (85)
-
-downloaded = set()
-
-for obj in bucket.objects.all():
-    full_obj = s3.Object(obj.bucket_name, obj.key)
-    if 'url' in full_obj.metadata:
-        downloaded.add(full_obj.metadata.get('url'))
-
 
 def main():
+    downloaded = set()
+
+    for obj in bucket.objects.all():
+        full_obj = s3.Object(obj.bucket_name, obj.key)
+        if 'url' in full_obj.metadata:
+            downloaded.add(full_obj.metadata.get('url'))
+
     i = 1
     do = []
     while True:
@@ -104,7 +100,7 @@ def main():
             })
 
 
-def get_permalink_url(track_id):
+def get_permalink_url(track_id: str) -> str:
     client = soundcloud.Client(client_id=scdl.CLIENT_ID)
     track = client.get('/tracks/' + track_id)
     return track.permalink_url
