@@ -23,6 +23,7 @@ import os
 from copy import copy
 import re
 import requests
+from typing import Optional, Union
 
 import feedparser
 from flask import Flask
@@ -37,8 +38,12 @@ s3 = boto3.resource('s3')
 bucket = s3.Bucket('alexa-speakca')
 
 
-def s3_url(obj):
-    # TODO this should really be something that boto provides
+def s3_url(obj) -> str:
+    """
+    Given an S3 object, get the public URL for it
+    :param obj: S3 object
+    :return: public URL
+    """
     return 'https://s3.amazonaws.com/%s/%s' % (obj.bucket_name, obj.key)
 
 
@@ -160,7 +165,14 @@ queue = QueueManager(playlist)
 
 
 @ask.intent('QuestionIntent')
-def grab_question():
+def grab_question() -> statement:
+    """
+    QuestionIntent handler
+
+    Fetches the question from the CA Speaks website, and
+    reads it to the user
+    :return: Statement
+    """
     # TODO: Add caching
     r = requests.get('https://speakca.net/')
     if not r.ok:
@@ -180,7 +192,13 @@ def grab_question():
 
 
 @ask.launch
-def launch():
+def launch() -> question:
+    """
+    Launch handler
+
+    Says intro text
+    :return: Question
+    """
     card_title = 'California Speaks'
     # FIXME: Better help text here?
     # parallelism
@@ -189,17 +207,33 @@ def launch():
 
 
 @ask.intent('AMAZON.StopIntent')
-def stop():
+def stop() -> statement:
+    """
+    StopIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+
+    Says goodbye message
+    :return: Statement
+    """
     return statement('Thanks for using the California Speaks skill')
 
 
 @ask.intent('AMAZON.CancelIntent')
-def cancel():
+def cancel() -> statement:
+    """
+    CancelIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+
+    Says goodbye message
+    :return: Statement
+    """
     return statement('Thanks for using the California Speaks skill')
 
 
 @ask.intent('AMAZON.FallbackIntent')
 def fallback():
+    """
+    FallbackIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    :return: Question
+    """
     card_title = 'California Speaks'
     text = """Sorry, I didn't understand that. You can ask the skill to play this week's episode,
     to read out this week's question. You can also search through past episodes for specific topics.
@@ -209,7 +243,11 @@ def fallback():
 
 
 @ask.intent('AMAZON.HelpIntent')
-def help_():
+def help_() -> question:
+    """
+    HelpIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    :return: Question
+    """
     card_title = 'California Speaks'
     # FIXME: Better help text here?
     # parallelism
@@ -222,7 +260,15 @@ For example, try asking Alexa to search for water.
 
 
 @ask.intent('SearchIntent')
-def search(term):
+def search(term: str) -> Union[question, statement, audio]:
+    """
+    SearchIntent handler
+
+    Allows users to search for episodes that match a specific term. Uses
+    WordPress's search over RSS to get results.
+
+    :param term: Search query
+    """
     r = requests.get('https://speakca.net/', params={'s': term, 'feed': 'rss2'})
     if not r.ok:
         return statement('Sorry, we\'re experiencing technical difficulties. Please try again later.')
@@ -236,7 +282,14 @@ def search(term):
 
 
 @ask.intent('DemoIntent')
-def start_playlist():
+def start_playlist() -> audio:
+    """
+    DemoIntent handler (TODO: this should be renamed to something more sensible
+    like AnswersIntent).
+
+    Starts a playlist of previous episodes.
+    :return: Audio
+    """
     speech = 'Enjoy this episode'
     stream_url = queue.start()
     return audio(speech).play(stream_url)
@@ -245,16 +298,19 @@ def start_playlist():
 # QueueManager object is not stepped forward here.
 # This allows for Next Intents and on_playback_finished requests to trigger the step
 @ask.on_playback_nearly_finished()
-def nearly_finished():
+def nearly_finished() -> Optional[audio]:
     if queue.up_next:
         next_stream = queue.up_next
         return audio().enqueue(next_stream)
 
+    return None
+
 
 @ask.on_playback_finished()
-def play_back_finished():
+def play_back_finished() -> Optional[statement]:
     if queue.up_next:
         queue.step()
+        return None
     else:
         return statement('No more episodes')
 
@@ -270,21 +326,33 @@ def stopped(offset, token):
 
 
 @ask.intent('AMAZON.PauseIntent')
-def pause():
+def pause() -> audio:
+    """
+    PauseIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    :return: Question
+    """
     msg = 'Paused'
     return audio(msg).stop().simple_card(msg)
 
 
 @ask.intent('AMAZON.ResumeIntent')
-def resume():
+def resume() -> audio:
+    """
+    ResumeIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    :return: Question
+    """
     msg = 'Resuming'
     return audio(msg).resume().simple_card(msg)
 
 
 @ask.session_ended
-def session_ended():
+def session_ended() -> tuple:
     return "{}", 200
 
 
 def lambda_handler(event, _context):
+    """
+    Main entry point for AWS Lambda. Proxies to Flask-Ask's
+    Lambda handler
+    """
     return ask.run_aws_lambda(event)
