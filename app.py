@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Alexa skill for California Speaks (<https://speakca.net/>)
+
 Copyright (C) 2018 Kunal Mehta <kunal.mehta@sjsu.edu>
 
 This program is free software: you can redistribute it and/or modify
@@ -171,6 +172,7 @@ def grab_question() -> statement:
 
     Fetches the question from the CA Speaks website, and
     reads it to the user
+
     :return: Statement
     """
     # TODO: Add caching
@@ -197,6 +199,7 @@ def launch() -> question:
     Launch handler
 
     Says intro text
+
     :return: Question
     """
     card_title = 'California Speaks'
@@ -209,9 +212,10 @@ def launch() -> question:
 @ask.intent('AMAZON.StopIntent')
 def stop() -> statement:
     """
-    StopIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    AMAZON.StopIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_)
 
     Says goodbye message
+
     :return: Statement
     """
     return statement('Thanks for using the California Speaks skill')
@@ -220,9 +224,10 @@ def stop() -> statement:
 @ask.intent('AMAZON.CancelIntent')
 def cancel() -> statement:
     """
-    CancelIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    AMAZON.CancelIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_)
 
     Says goodbye message
+
     :return: Statement
     """
     return statement('Thanks for using the California Speaks skill')
@@ -231,7 +236,8 @@ def cancel() -> statement:
 @ask.intent('AMAZON.FallbackIntent')
 def fallback():
     """
-    FallbackIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    AMAZON.FallbackIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_)
+
     :return: Question
     """
     card_title = 'California Speaks'
@@ -245,7 +251,8 @@ def fallback():
 @ask.intent('AMAZON.HelpIntent')
 def help_() -> question:
     """
-    HelpIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    AMAZON.HelpIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_)
+
     :return: Question
     """
     card_title = 'California Speaks'
@@ -288,6 +295,7 @@ def start_playlist() -> audio:
     like AnswersIntent).
 
     Starts a playlist of previous episodes.
+
     :return: Audio
     """
     speech = 'Enjoy this episode'
@@ -328,7 +336,8 @@ def stopped(offset, token):
 @ask.intent('AMAZON.PauseIntent')
 def pause() -> audio:
     """
-    PauseIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    AMAZON.PauseIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_)
+
     :return: Question
     """
     msg = 'Paused'
@@ -338,7 +347,8 @@ def pause() -> audio:
 @ask.intent('AMAZON.ResumeIntent')
 def resume() -> audio:
     """
-    ResumeIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_
+    AMAZON.ResumeIntent handler (see `Amazon documentation <https://developer.amazon.com/docs/custom-skills/standard-built-in-intents.html>`_)
+
     :return: Question
     """
     msg = 'Resuming'
