@@ -1,0 +1,10 @@
+language: python
+python:
+  - "3.6"
+sudo: false
+matrix:
+  fast_finish: true
+# command to install dependencies
+install: pip install tox
+# command to run tests
+script: tox
